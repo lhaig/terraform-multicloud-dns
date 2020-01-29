@@ -4,6 +4,12 @@ resource "azurerm_resource_group" "dns_resource_group" {
   count    = var.create_azure_dns_zone ? 1 : 0
   name     = "${var.namespace}DNSrg"
   location = var.azure_location
+  tags = {
+    name        = var.namespace
+    owner       = var.owner
+    created-by  = var.created-by
+    DoNotDelete = true
+  }
 }
 
 resource "azurerm_dns_zone" "azure_sub_zone" {
@@ -11,8 +17,9 @@ resource "azurerm_dns_zone" "azure_sub_zone" {
   name                = "${var.namespace}.azure.${var.hosted-zone}"
   resource_group_name = azurerm_resource_group.dns_resource_group.0.name
   tags = {
-    name       = var.namespace
-    owner      = var.owner
-    created-by = var.created-by
+    name        = var.namespace
+    owner       = var.owner
+    created-by  = var.created-by
+    DoNotDelete = true
   }
 }
