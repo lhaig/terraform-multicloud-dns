@@ -13,6 +13,7 @@ resource "aws_route53_zone" "aws_sub_zone" {
     name       = var.namespace
     owner      = var.owner
     created-by = var.created-by
+    ttl        = "-1"
   }
 }
 
@@ -40,6 +41,7 @@ resource "aws_route53_zone" "azure_sub_zone" {
     name       = var.namespace
     owner      = var.owner
     created-by = var.created-by
+    ttl        = "-1"
   }
 }
 
@@ -63,10 +65,12 @@ resource "aws_route53_zone" "gcp_sub_zone" {
   name          = "${var.namespace}.gcp.${var.hosted-zone}"
   comment       = "Managed by Terraform, Delegated Sub Zone for GCP for  ${var.namespace}"
   force_destroy = false
+
   tags = {
     name       = var.namespace
     owner      = var.owner
     created-by = var.created-by
+    ttl        = "-1"
   }
 }
 
