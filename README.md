@@ -8,7 +8,7 @@ The best practice is to deploy a dedicated DNS delegated subdomain into each clo
 
 This blog post is going to show you how this could be done using Terraform Cloud. If you have a [Terraform Enterprise](https://www.terraform.io/docs/enterprise/index.html) installation in your company, you could use exactly the same configuration and setup to deploy this example from there. The reason for this is that Terraform Enterprise is deployed using the same engine that is used within Terraform Cloud.
 
-The git repository for this blog post can be found here: 
+The git repository for this blog post can be found here:
 [https://github.com/lhaig/dns-multicloud](https://github.com/lhaig/dns-multicloud)
 
 You can read more about Terraform Enterprise here:
@@ -138,14 +138,14 @@ Terraform Cloud does not allow new line characters in variables and so needs to 
 Follow the steps below to prepare them.
 
     vim gcp-credentials.json
-    
+
     then press :
-    
-    enter the following 
+
+    enter the following
     %s;\n; ;g
-    
+
     Press enter
-    
+
     Save the file by pressing : then wq and press enter
 
 If you do not have access to vim in your environment. Open the editor of your choice and remove all Carriage returns from the file so the complete json file is on one line.
@@ -164,7 +164,7 @@ Open the [Terraform VCS](https://www.terraform.io/docs/cloud/vcs/) page to find 
 
 We will use GitHub as the provider but the workflow will be similar for other providers. Click on the Connect to Version Control button** **on the page. Select the **Github** button.
 
-![](https://cdn-images-1.medium.com/max/2852/1*CJ8BOCalFaLScBVApdWymg.png)
+![Terraform  Cloud login window](https://cdn-images-1.medium.com/max/2852/1*CJ8BOCalFaLScBVApdWymg.png)
 
 Select your organization in the dropdown. Find the cloned repository **dns-multicloud** and click on the name.
 
@@ -288,8 +288,8 @@ This file describes the creation of the delegated zone that is hosted in the Azu
 
 [**gcp.tf](https://github.com/lhaig/dns-multicloud/blob/master/gcp.tf)**
 
-This file describes the creation of the delegated zone that is hosted in the GCP DNS service. One thing to note is that when you create a zone in GCP, the dns_name argument needs to have a DNS name with the . at the end 
-(e.g. *main.gcp.hashidemos.io.*). Don’t remove the period from the code.
+This file describes the creation of the delegated zone that is hosted in the GCP DNS service. One thing to note is that when you create a zone in GCP, the dns_name argument needs to have a DNS name with the . at the end
+(e.g. *main.gcp.hashidemos.io.*). Don't remove the period from the code.
 
     # GCP SUBZONE
 
@@ -401,7 +401,7 @@ This section creates the GCP delegated zone using the outputs from the resources
       type    = "NS"
       ttl     = "30"
 
-      records = [ 
+      records = [
          for gcpns in
            google_dns_managed_zone.gcp_sub_zone.0.name_servers:
          gcpns
