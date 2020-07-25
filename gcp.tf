@@ -8,7 +8,7 @@ resource "google_dns_managed_zone" "gcp_sub_zone" {
   description = "Managed by Terraform, Delegated Sub Zone for GCP for  ${var.namespace}"
   labels = {
     name       = var.namespace
-    owner      = var.owner
+    owner      = replace(var.owner, "/@|\\./", "-")
     created-by = var.created-by
   }
 }
