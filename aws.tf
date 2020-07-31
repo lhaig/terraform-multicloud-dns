@@ -1,3 +1,7 @@
+provider "aws" {
+  region = var.aws_region
+}
+
 data "aws_route53_zone" "main" {
   name = var.hosted-zone
 }
