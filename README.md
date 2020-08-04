@@ -6,7 +6,7 @@ When working on an application that is running in multiple clouds, the differenc
 
 The best practice is to deploy a dedicated DNS delegated subdomain into each cloud provider that you will be using for your application.
 
-This blog post is going to show you how this could be done using Terraform Cloud. If you have a [Terraform Enterprise](https://www.terraform.io/docs/enterprise/index.html) installation in your company, you could use exactly the same configuration and setup to deploy this example from there. The reason for this is that Terraform Enterprise is deployed using the same engine that is used within Terraform Cloud.
+If you have a [Terraform Enterprise](https://www.terraform.io/docs/enterprise/index.html) installation in your company, you could use exactly the same configuration and setup to deploy this example from there. The reason for this is that Terraform Enterprise is deployed using the same engine that is used within Terraform Cloud.
 
 The original git repository for the terraform code that was created can be found here
 [https://github.com/lhaig/dns-multicloud](https://github.com/lhaig/dns-multicloud)
