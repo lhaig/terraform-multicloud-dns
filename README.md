@@ -8,8 +8,19 @@ The best practice is to deploy a dedicated DNS delegated subdomain into each clo
 
 This blog post is going to show you how this could be done using Terraform Cloud. If you have a [Terraform Enterprise](https://www.terraform.io/docs/enterprise/index.html) installation in your company, you could use exactly the same configuration and setup to deploy this example from there. The reason for this is that Terraform Enterprise is deployed using the same engine that is used within Terraform Cloud.
 
-The git repository for this blog post can be found here:
+The original git repository for the terraform code that was created can be found here
 [https://github.com/lhaig/dns-multicloud](https://github.com/lhaig/dns-multicloud)
+
+The original blogpost that goes with this can be found
+
+[Haigmail](https://www.haigmail.com/2019/10/08/multi-cloud-dns-delegated-sub-domain-with-terraform-and-terraform-cloud/)
+
+and here
+
+[Medium](https://medium.com/hashicorp-engineering/deploying-dns-delegated-subdomains-using-terraform-cloud-94be8b0009aa)
+
+## Why This Repository
+This git repository is a continuation of that inital idea, we have now changed the code to be more capable of being imported into the modulle registry for Terraform Cloud or Terraform Enterprise. 
 
 You can read more about Terraform Enterprise here:
 
@@ -21,11 +32,11 @@ You can read more about Terraform Cloud here:
 
 ## Use this repository as a module
 
-If you want to use the repository as a module you can use the [v1.1](https://github.com/lhaig/dns-multicloud/tree/v1.1) release and include it in the source block.
+If you want to use the repository as a module you can use the [v0.3.0](https://github.com/lhaig/terraform-dns-multicloud/tree/v0.3.0) release and include it in the source block.
 Example:
 
     module "dns-multicloud" {
-      source              = "git::https://github.com/lhaig/dns-multicloud.git?ref=v1.1"
+      source              = "git::https://github.com/lhaig/terraform-dns-multicloud.git?ref=v0.3.0"
     }
 
 ## What is a Delegated Subdomain
@@ -53,14 +64,14 @@ Login to your Terraform Cloud account.
 *If you are using the Terraform Cloud platform for the first time, you need to [create an organization](https://www.terraform.io/docs/cloud/users-teams-organizations/organizations.html) before creating the workspace needed.*
 [Create a workspace](https://www.terraform.io/docs/cloud/workspaces/creating.html) to deploy your zones with.
 
-Fork the [https://github.com/lhaig/dns-multicloud.git](https://github.com/lhaig/dns-multicloud.git) GitHub repository so that you can make changes to the plan for your deployment. We will link the repository to your workspace at the end of the blog post.
+Fork the [https://github.com/lhaig/terraform-dns-multicloud.git](https://github.com/lhaig/terraform-dns-multicloud.git) GitHub repository so that you can make changes to the plan for your deployment. We will link the repository to your workspace at the end of the blog post.
 
 Now clone the git repository,
 
-    git clone https://github.com/YOURNAME/dns-multicloud.git
+    git clone https://github.com/YOURNAME/terraform-dns-multicloud.git
     cd dns-multicloud
 
-Open the file [variables.tf](https://github.com/lhaig/dns-multicloud/blob/master/variables.tf) in your editor. It will look like this:
+Open the file [variables.tf](https://github.com/lhaig/terraform-dns-multicloud/blob/master/variables.tf) in your editor. It will look something like this:
 
     # General
     variable "owner" {
@@ -88,11 +99,6 @@ Open the file [variables.tf](https://github.com/lhaig/dns-multicloud/blob/master
       default     = "false"
     }
 
-    variable "aws_region" {
-      description = "The region to create resources."
-      default     = "eu-west-2"
-    }
-
     # Azure
 
     variable "create_azure_dns_zone" {
@@ -116,11 +122,6 @@ Open the file [variables.tf](https://github.com/lhaig/dns-multicloud/blob/master
 
     variable "gcp_project" {
       description = "GCP project name"
-    }
-
-    variable "gcp_region" {
-      description = "GCP region, e.g. us-east1"
-      default     = "europe-west3"
     }
 
 Now open the workspace [Variables](https://www.terraform.io/docs/cloud/workspaces/variables.html) section in the workspace and create and populate the variables as they are listed above. The result should look like this:
@@ -166,7 +167,7 @@ We will use GitHub as the provider but the workflow will be similar for other pr
 
 ![Terraform  Cloud login window](https://cdn-images-1.medium.com/max/2852/1*CJ8BOCalFaLScBVApdWymg.png)
 
-Select your organization in the dropdown. Find the cloned repository **dns-multicloud** and click on the name.
+Select your organization in the dropdown. Find the cloned repository **terraform-dns-multicloud** and click on the name.
 
 ![](https://cdn-images-1.medium.com/max/3144/1*SClV-UeJSASQyc5c9oJeeA.png)
 
@@ -200,244 +201,36 @@ More in-depth documentation can be found in the [Connecting VCS Providers to Ter
 
 You could now make changes to the files and have the system automatically plan and apply them.
 
-## Exploring the Repository
-
-The repository has a number of files within it. We will look at each terraform file individually. The files represent areas of concern for the deployment.
-
-    => tree
-     .
-     ├── LICENSE
-     ├── README.md
-     ├── aws.tf
-     ├── azure.tf
-     ├── main.tf
-     ├── gcp.tf
-     ├── outputs.tf
-     └── variables.tf
-     0 directories, 8 files
-
-[**main.tf](https://github.com/lhaig/dns-multicloud/blob/master/main.tf)**
-
-This file contains all the general items such as provider blocks and the backend configuration.
-
-    # Remote Backend Configuration:
-
-    terraform {
-      required_version = ">= 0.12.0
-      backend "remote" {
-        hostname     = "app.terraform.io"
-        organization = "dns-multicloud-org"
-        workspaces {
-          name = "dns-multicloud"
-        }
-      }
-    }
-
-    # AWS General Configuration
-
-    provider "aws" {
-      version = "~> 2.0"
-      region  = var.aws_region
-    }
-
-    # GCP General Configuration
-
-    provider "google" {
-      version = "~> 2.9"
-      project = var.gcp_project
-      region  = var.gcp_region
-    }
-
-    # Azure General Configuration
-
-    provider "azurerm" {
-      version = "~>1.32.1"
-    }
-
-You will need to update the following sections with the details for your environment.
-
-    dns-multicloud-org (Your organization name)
-    dns-multicloud (Your workspace name)
-
-**Save the file and commit it to your repository.**
-
-We will now step through the other files in the repository.
-
-[**azure.tf](https://github.com/lhaig/dns-multicloud/blob/master/azure.tf)**
-
-This file describes the creation of the delegated zone that is hosted in the Azure DNS service. The declaration creates a dedicated [resource group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-overview#resource-groups) for the hosted DNS to minimise the risk of it being deleted during normal day to day operations.
-
-    #Azure SUBZONE
-
-    resource "azurerm_resource_group" "dns_resource_group" {
-      count = var.create_azure_dns_zone ? 1 : 0
-      name     = "${var.namespace}DNSrg"
-      location = var.azure_location
-    }
-
-    resource "azurerm_dns_zone" "azure_sub_zone" {
-      count = var.create_azure_dns_zone ? 1 : 0
-      name                = "${var.namespace}.azure.${var.hosted-zone}"
-      resource_group_name = "${azurerm_resource_group.dns_resource_group.0.name}"
-      tags = {
-        name        = var.namespace
-        owner       = var.owner
-        created-by  = var.created-by
-      }
-    }
-
-[**gcp.tf](https://github.com/lhaig/dns-multicloud/blob/master/gcp.tf)**
-
-This file describes the creation of the delegated zone that is hosted in the GCP DNS service. One thing to note is that when you create a zone in GCP, the dns_name argument needs to have a DNS name with the . at the end
-(e.g. *main.gcp.hashidemos.io.*). Don't remove the period from the code.
-
-    # GCP SUBZONE
-
-    resource "google_dns_managed_zone" "gcp_sub_zone" {
-      count = var.create_gcp_dns_zone ? 1 : 0
-      name              = "${var.namespace}-zone"
-      dns_name          = "${var.namespace}.gcp.${var.hosted-zone}."
-      project           = var.gcp_project
-      description       = "Managed by Terraform, Delegated Sub Zone for GCP for  ${var.namespace}"
-      labels = {
-        name = var.namespace
-        owner = var.owner
-        created-by = var.created-by
-      }
-    }
-
-[**aws.tf](https://github.com/lhaig/dns-multicloud/blob/master/aws.tf)**
-
-This file contains the declared resources for AWS. It is the main file that does the final configuration of the delegated domains for each Cloud Provider.
-
-Let us step through them.
-
-This section in the beginning uses the data block to gather information about the current AWS hosted zone.
-
-    # Query the current AWS master zone
-
-    data "aws_route53_zone" "main" {
-      name = var.hosted-zone
-    }
-
-This section is where the delegated [Route53](https://aws.amazon.com/route53/) zones that will be used in AWS are described. It then uses an **aws_route53_record** resource to create the NS records for the delegated zone which it gathers as output from the zone created earlier.
-
-    # AWS SUBZONE
-
-    resource "aws_route53_zone" "aws_sub_zone" {
-      count = var.create_aws_dns_zone ? 1 : 0
-      name = "${var.namespace}.aws.${var.hosted-zone}"
-      comment = "Managed by Terraform, Delegated Sub Zone for AWS for ${var.namespace}"
-
-      tags = {
-        name        = var.namespace
-        owner       = var.owner
-        created-by  = var.created-by
-      }
-    }
-
-    resource "aws_route53_record" "aws_sub_zone_ns" {
-      count = var.create_aws_dns_zone ? 1 : 0
-      zone_id = "${data.aws_route53_zone.main.zone_id}"
-      name    = "${var.namespace}.aws.${var.hosted-zone}"
-      type    = "NS"
-      ttl     = "30"
-
-      records = [
-        for awsns in aws_route53_zone.aws_sub_zone.0.name_servers:
-        awsns
-      ]
-    }
-
-This section creates the Azure delegated zone using the outputs from the resources in the [azure.tf](https://github.com/lhaig/dns-multicloud/blob/master/azure.tf) file.
-
-    # Azure SUBZONE
-
-    resource "aws_route53_zone" "azure_sub_zone" {
-      count = var.create_azure_dns_zone ? 1 : 0
-      name = "${var.namespace}.azure.${var.hosted-zone}"
-      comment = "Managed by Terraform, Delegated Sub Zone for Azure for ${var.namespace}"
-
-      tags = {
-        name        = var.namespace
-        owner       = var.owner
-        created-by  = var.created-by
-      }
-    }
-
-    resource "aws_route53_record" "azure_sub_zone_ns" {
-      count = var.create_azure_dns_zone ? 1 : 0
-      zone_id = "${data.aws_route53_zone.main.zone_id}"
-      name    = "${var.namespace}.azure.${var.hosted-zone}"
-      type    = "NS"
-      ttl     = "30"
-
-      records = [
-        for azurens in azurerm_dns_zone.azure_sub_zone.0.name_servers:
-        azurens
-      ]
-    }
-
-This section creates the GCP delegated zone using the outputs from the resources in the [gcp.tf](https://github.com/lhaig/dns-multicloud/blob/master/gcp.tf) file.
-
-    # GCP SubZone
-
-    resource "aws_route53_zone" "gcp_sub_zone" {
-      count = var.create_gcp_dns_zone ? 1 : 0
-      name          = "${var.namespace}.gcp.${var.hosted-zone}"
-      comment       = "Managed by Terraform, Delegated Sub Zone for GCP for  ${var.namespace}"
-      force_destroy = false
-      tags = {
-        name           = var.namespace
-        owner          = var.owner
-        created-by     = var.created-by
-     }
-    }
-
-    resource "aws_route53_record" "gcp_sub_zone" {
-      count = var.create_gcp_dns_zone ? 1 : 0
-      zone_id = "${data.aws_route53_zone.main.zone_id}"
-      name    = "${var.namespace}.gcp.${var.hosted-zone}"
-      type    = "NS"
-      ttl     = "30"
-
-      records = [
-         for gcpns in
-           google_dns_managed_zone.gcp_sub_zone.0.name_servers:
-         gcpns
-        ]
-     }
-
 [outputs.tf](https://github.com/lhaig/dns-multicloud/blob/master/outputs.tf)
 
 The last file is the [outputs.tf](https://github.com/lhaig/dns-multicloud/blob/master/outputs.tf) file. In this file we describe the outputs that we think will be needed when we want to use these zones when we are creating resources in the cloud providers.
 
     output "aws_sub_zone_id" {
-      value = aws_route53_zone.aws_sub_zone.*.zone_id
+      value = var.create_aws_dns_zone ? aws_route53_zone.aws_sub_zone[0].zone_id : ""
     }
 
     output "aws_sub_zone_nameservers" {
-      value = aws_route53_zone.aws_sub_zone.*.name_servers
+      value = var.create_aws_dns_zone ? aws_route53_zone.aws_sub_zone[0].name_servers : []
     }
 
     output "azure_sub_zone_name" {
-      value = azurerm_dns_zone.azure_sub_zone.*.id
+      value = var.create_azure_dns_zone ? azurerm_dns_zone.azure_sub_zone[0].id : ""
     }
 
     output "azure_sub_zone_nameservers" {
-      value = azurerm_dns_zone.azure_sub_zone.*.name_servers
+      value = var.create_azure_dns_zone ? azurerm_dns_zone.azure_sub_zone[0].name_servers : []
     }
 
     output "azure_dns_resourcegroup" {
-      value = azurerm_resource_group.dns_resource_group.*.name
+      value = var.create_azure_dns_zone ? azurerm_resource_group.dns_resource_group[0].name : ""
     }
 
     output "gcp_dns_zone_name" {
-      value = google_dns_managed_zone.gcp_sub_zone.*.name
+      value = var.create_gcp_dns_zone ? google_dns_managed_zone.gcp_sub_zone[0].name : ""
     }
 
     output "gcp_dns_zone_nameservers" {
-      value = google_dns_managed_zone.gcp_sub_zone.*.name_servers
+      value = var.create_gcp_dns_zone ? google_dns_managed_zone.gcp_sub_zone[0].name_servers : []
     }
 
 The outputs to take note of for use in other deployments are:
@@ -452,18 +245,3 @@ After you have customised the terraform files to your liking, save the files and
 
 When you now push the changes to the repository, Terraform Cloud will pick up these changes and run the plan for this repository.
 
-## Conclusion
-
-As you can see it is quite easy to utilize Terraform when you need to work with multiple cloud providers at once to deploy resources. Using this capability we were able to deploy our DNS zones easily without too much work. Using Terraform Cloud to host your state files and workflows will allow you to better utilise the results and outputs of the deployment in a secure, scalable manner.
-
-I will create a future blog post that will show how one would use the outputs we created in this blog post to deploy resources in each cloud platform and provide them each with DNS records.
-
-# dns-multicloud
-
-This repository is part of a blog post published here
-
-[Haigmail](https://www.haigmail.com/2019/10/08/multi-cloud-dns-delegated-sub-domain-with-terraform-and-terraform-cloud/)
-
-and here
-
-[Medium](https://medium.com/hashicorp-engineering/deploying-dns-delegated-subdomains-using-terraform-cloud-94be8b0009aa)
