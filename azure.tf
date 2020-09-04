@@ -1,4 +1,7 @@
 #Azure SUBZONE
+provider "azurerm" {
+   features {}
+}
 
 resource "azurerm_resource_group" "dns_resource_group" {
   count    = var.create_azure_dns_zone ? 1 : 0
