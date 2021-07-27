@@ -20,7 +20,7 @@ and here
 [Medium](https://medium.com/hashicorp-engineering/deploying-dns-delegated-subdomains-using-terraform-cloud-94be8b0009aa)
 
 ## Why This Repository
-This git repository is a continuation of that inital idea, we have now changed the code to be more capable of being imported into the modulle registry for Terraform Cloud or Terraform Enterprise. 
+This git repository is a continuation of that inital idea, we have now changed the code to be more capable of being imported into the module registry for Terraform Cloud or Terraform Enterprise.
 
 You can read more about Terraform Enterprise here:
 
@@ -32,11 +32,11 @@ You can read more about Terraform Cloud here:
 
 ## Use this repository as a module
 
-If you want to use the repository as a module you can use the [v0.3.0](https://github.com/lhaig/terraform-dns-multicloud/tree/v0.3.0) release and include it in the source block.
+If you want to use the repository as a module you can use the [v0.3.0](https://github.com/lhaig/terraform-multicloud-dns/tree/v0.3.0) release and above and include it in the source block.
 Example:
 
     module "dns-multicloud" {
-      source              = "git::https://github.com/lhaig/terraform-dns-multicloud.git?ref=v0.3.0"
+      source              = "git::https://github.com/lhaig/terraform-multicloud-dns.git?ref=v0.3.0"
     }
 
 ## What is a Delegated Subdomain
@@ -64,14 +64,14 @@ Login to your Terraform Cloud account.
 *If you are using the Terraform Cloud platform for the first time, you need to [create an organization](https://www.terraform.io/docs/cloud/users-teams-organizations/organizations.html) before creating the workspace needed.*
 [Create a workspace](https://www.terraform.io/docs/cloud/workspaces/creating.html) to deploy your zones with.
 
-Fork the [https://github.com/lhaig/terraform-dns-multicloud.git](https://github.com/lhaig/terraform-dns-multicloud.git) GitHub repository so that you can make changes to the plan for your deployment. We will link the repository to your workspace at the end of the blog post.
+Fork the [https://github.com/lhaig/terraform-multicloud-dns.git](https://github.com/lhaig/terraform-multicloud-dns.git) GitHub repository so that you can make changes to the plan for your deployment. We will link the repository to your workspace at the end of the blog post.
 
 Now clone the git repository,
 
-    git clone https://github.com/YOURNAME/terraform-dns-multicloud.git
+    git clone https://github.com/YOURNAME/terraform-multicloud-dns.git
     cd dns-multicloud
 
-Open the file [variables.tf](https://github.com/lhaig/terraform-dns-multicloud/blob/master/variables.tf) in your editor. It will look something like this:
+Open the file [variables.tf](https://github.com/lhaig/terraform-multicloud-dns/blob/master/variables.tf) in your editor. It will look something like this:
 
     # General
     variable "owner" {
@@ -167,7 +167,7 @@ We will use GitHub as the provider but the workflow will be similar for other pr
 
 ![Terraform  Cloud login window](https://cdn-images-1.medium.com/max/2852/1*CJ8BOCalFaLScBVApdWymg.png)
 
-Select your organization in the dropdown. Find the cloned repository **terraform-dns-multicloud** and click on the name.
+Select your organization in the dropdown. Find the cloned repository **terraform-multicloud-dns** and click on the name.
 
 ![](https://cdn-images-1.medium.com/max/3144/1*SClV-UeJSASQyc5c9oJeeA.png)
 
