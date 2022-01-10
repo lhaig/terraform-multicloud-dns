@@ -8,9 +8,14 @@ output "aws_sub_zone_nameservers" {
   value = var.create_aws_dns_zone ? aws_route53_zone.aws_sub_zone[0].name_servers : []
 }
 
+output "azure_sub_zone_id" {
+  description = "The Azure Sub Zone ID"
+  value = var.create_azure_dns_zone ? azurerm_dns_zone.azure_sub_zone[0].id : ""
+}
+
 output "azure_sub_zone_name" {
   description = "The Azure Sub Zone Name"
-  value = var.create_azure_dns_zone ? azurerm_dns_zone.azure_sub_zone[0].id : ""
+  value = var.create_azure_dns_zone ? azurerm_dns_zone.azure_sub_zone[0].name : ""
 }
 
 output "azure_sub_zone_nameservers" {
